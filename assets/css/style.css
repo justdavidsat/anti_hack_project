@@ -1,0 +1,243 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+:root {
+    --primary-color: #2c5f2d;        /* Deep School Green */
+    --secondary-color: #4a7c59;      /* Lighter Green */
+    --accent-color: #97bc62;         /* Bright Accent Green */
+    --light-accent-color: #e8f5e9;   /* Very Light Green */
+    --background-color: #f4f7f6;     /* Soft Off-White */
+    --card-color: #ffffff;           /* White Cards */
+    --text-color: #333333;           /* Dark Text */
+    --muted-text-color: #666666;     /* Muted Gray */
+    --border-color: #dce2e1;         /* Light Border */
+    --error-color: #c62828;          /* Red */
+    --success-color: #2e7d32;        /* Green */
+    --warning-color: #f57c00;        /* Orange */
+    --font-family: 'Roboto', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.main-wrapper {
+    width: 100%;
+    max-width: 950px;
+    background-color: var(--card-color);
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-header {
+    background-color: var(--primary-color);
+    padding: 25px 30px;
+    text-align: center;
+    border-bottom: 4px solid var(--accent-color);
+}
+
+.main-header h1 {
+    color: #ffffff;
+    font-weight: 700;
+    letter-spacing: 1px;
+    font-size: 1.8em;
+}
+
+.nav-links {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.nav-links a {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    margin: 5px 15px;
+    font-weight: 500;
+    padding: 5px 0;
+    transition: color 0.3s ease, border-bottom 0.3s ease;
+    border-bottom: 2px solid transparent;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+    color: #ffffff;
+    border-bottom-color: var(--accent-color);
+}
+
+.content-area {
+    padding: 40px;
+}
+
+/* --- Forms --- */
+.form-wrapper {
+    max-width: 450px;
+    margin: 0 auto;
+}
+
+.form-wrapper h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px 15px;
+    background-color: var(--background-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-color);
+    font-family: var(--font-family);
+    font-size: 16px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 3px rgba(151, 188, 98, 0.2);
+}
+
+.btn {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--primary-color);
+    border: none;
+    border-radius: 8px;
+    color: #ffffff;
+    font-family: var(--font-family);
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn:hover {
+    background-color: var(--secondary-color);
+    transform: translateY(-2px);
+}
+
+/* --- Alerts --- */
+.alert-error, .alert-success {
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 500;
+    border-left: 5px solid;
+}
+
+.alert-error {
+    background-color: #ffebee;
+    border-left-color: var(--error-color);
+    color: var(--error-color);
+}
+
+.alert-success {
+    background-color: #e8f5e9;
+    border-left-color: var(--success-color);
+    color: var(--success-color);
+}
+
+/* --- Other elements (Dashboard, Profile, etc.) --- */
+.dashboard-content h2, .profile-info h2, .security-logs h2, .settings-section h2 {
+    color: var(--primary-color);
+    margin-bottom: 20px;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 10px;
+}
+
+.profile-info p {
+    color: var(--muted-text-color);
+}
+
+.log-entry {
+    padding: 15px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.log-entry:last-child {
+    border-bottom: none;
+}
+
+.log-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.log-table th, .log-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.log-table th {
+    background-color: var(--light-accent-color);
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.log-table tr:hover {
+    background-color: var(--background-color);
+}
+
+.pagination a, .pagination span {
+    color: var(--primary-color);
+    padding: 10px 15px;
+    text-decoration: none;
+    border: 1px solid var(--border-color);
+    margin: 0 5px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+.pagination a:hover {
+    background-color: var(--primary-color);
+    color: #ffffff;
+}
+
+.pagination .active {
+    background-color: var(--primary-color);
+    color: #ffffff;
+    border-color: var(--primary-color);
+}
+
+.main-footer {
+    text-align: center;
+    padding: 20px;
+    background-color: var(--primary-color);
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+}
