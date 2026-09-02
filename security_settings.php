@@ -197,11 +197,9 @@ if ($stmt = $conn->prepare($count_sql)) {
             <p><em>Note: This is a simulated 2FA toggle for demonstration purposes. In a real application, this would integrate with an authenticator app.</em></p>
             <?php if(!empty($two_fa_success)) { echo '<div class="alert-success">' . $two_fa_success . '</div>'; } ?>
             <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
-                <div class="form-group">
-                    <label style="display: flex; align-items: center; cursor: pointer;">
-                        <input type="checkbox" name="two_factor_enabled" value="1" <?php echo ($user_data['two_factor_enabled']) ? 'checked' : ''; ?> onchange="this.form.submit()">
-                        <span style="margin-left: 10px;">Enable 2FA</span>
-                    </label>
+                <div class="form-group" style="display: flex; align-items: center;">
+                    <input type="checkbox" name="two_factor_enabled" value="1" <?php echo ($user_data['two_factor_enabled']) ? 'checked' : ''; ?> onchange="this.form.submit()" style="width: auto; margin-right: 10px;">
+                    <label for="two_factor_enabled" style="margin: 0; cursor: pointer; font-weight: 500;">Enable 2FA</label>
                 </div>
                 <input type="hidden" name="toggle_2fa" value="1">
             </form>
