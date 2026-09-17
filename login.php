@@ -93,18 +93,14 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     // Close connection
     $conn->close();
 }
+
+$page_title = "Login";
+require_once "includes/header.php";
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Login - Anti-Hacking Solution</title>
-    <link rel="stylesheet" href="assets/css/style.css">
-</head>
-<body>
-    <div class="wrapper">
-        <h2>Login</h2>
+<div class="form-wrapper">
+    <div class="auth-card">
+        <h2><i class="fas fa-user-lock"></i> Login</h2>
         <p>Please fill in your credentials to login.</p>
 
         <?php
@@ -115,20 +111,31 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
         <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
             <div class="form-group">
-                <label>Username or Email</label>
+                <label><i class="fas fa-user"></i> Username or Email</label>
                 <input type="text" name="username" value="<?php echo $username; ?>">
                 <span class="error"><?php echo $username_err; ?></span>
             </div>
             <div class="form-group">
-                <label>Password</label>
+                <label><i class="fas fa-lock"></i> Password</label>
                 <input type="password" name="password">
                 <span class="error"><?php echo $password_err; ?></span>
             </div>
             <div class="form-group">
                 <input type="submit" class="btn" value="Login">
             </div>
-            <p>Don't have an account? <a href="register.php">Sign up now</a>.</p>
+            <p class="auth-switch">Don't have an account? <a href="register.php">Sign up now</a>.</p>
         </form>
     </div>
-</body>
-</html>
+</div>
+
+<style>
+.auth-card { background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.08); border-top: 4px solid var(--accent-color); }
+.auth-card h2 { color: var(--primary-color); text-align: center; margin-bottom: 10px; }
+.auth-card > p { text-align: center; color: var(--muted-text-color); margin-bottom: 20px; }
+.auth-switch { text-align: center; margin-top: 15px; }
+.auth-switch a { color: var(--primary-color); font-weight: 600; text-decoration: none; }
+.auth-switch a:hover { text-decoration: underline; }
+.error { color: var(--error-color); font-size: 0.9em; display: block; margin-top: 5px; }
+</style>
+
+<?php require_once "includes/footer.php"; ?>

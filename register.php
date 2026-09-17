@@ -98,45 +98,52 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     }
     $conn->close();
 }
+
+$page_title = "Sign Up";
+require_once "includes/header.php";
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Sign Up - Anti-Hacking Solution</title>
-    <link rel="stylesheet" href="assets/css/style.css">
-</head>
-<body>
-    <div class="wrapper">
-        <h2>Sign Up</h2>
+<div class="form-wrapper">
+    <div class="auth-card">
+        <h2><i class="fas fa-user-plus"></i> Sign Up</h2>
         <p>Please fill this form to create an account.</p>
         <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
             <div class="form-group">
-                <label>Username</label>
+                <label><i class="fas fa-user"></i> Username</label>
                 <input type="text" name="username" value="<?php echo $username; ?>">
                 <span class="error"><?php echo $username_err; ?></span>
             </div>
             <div class="form-group">
-                <label>Email</label>
+                <label><i class="fas fa-envelope"></i> Email</label>
                 <input type="email" name="email" value="<?php echo $email; ?>">
                 <span class="error"><?php echo $email_err; ?></span>
             </div>
             <div class="form-group">
-                <label>Password</label>
+                <label><i class="fas fa-lock"></i> Password</label>
                 <input type="password" name="password">
                 <span class="error"><?php echo $password_err; ?></span>
             </div>
             <div class="form-group">
-                <label>Confirm Password</label>
+                <label><i class="fas fa-lock"></i> Confirm Password</label>
                 <input type="password" name="confirm_password">
                 <span class="error"><?php echo $confirm_password_err; ?></span>
             </div>
             <div class="form-group">
                 <input type="submit" class="btn" value="Submit">
             </div>
-            <p>Already have an account? <a href="login.php">Login here</a>.</p>
+            <p class="auth-switch">Already have an account? <a href="login.php">Login here</a>.</p>
         </form>
     </div>
-</body>
-</html>
+</div>
+
+<style>
+.auth-card { background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.08); border-top: 4px solid var(--accent-color); }
+.auth-card h2 { color: var(--primary-color); text-align: center; margin-bottom: 10px; }
+.auth-card > p { text-align: center; color: var(--muted-text-color); margin-bottom: 20px; }
+.auth-switch { text-align: center; margin-top: 15px; }
+.auth-switch a { color: var(--primary-color); font-weight: 600; text-decoration: none; }
+.auth-switch a:hover { text-decoration: underline; }
+.error { color: var(--error-color); font-size: 0.9em; display: block; margin-top: 5px; }
+</style>
+
+<?php require_once "includes/footer.php"; ?>

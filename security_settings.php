@@ -135,41 +135,32 @@ if ($stmt = $conn->prepare($count_sql)) {
  $total_pages = ceil($total_logs / $logs_per_page);
 
  $conn->close();
+
+$page_title = "Security Settings";
+require_once "includes/header.php";
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Security Settings - <?php echo htmlspecialchars($username); ?></title>
-    <link rel="stylesheet" href="assets/css/style.css">
-    <style>
-        .settings-container { max-width: 900px; margin: 20px auto; padding: 20px; background: #fff; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        .settings-section { margin-bottom: 40px; border-bottom: 1px solid #eee; padding-bottom: 20px; }
-        .settings-section:last-child { border-bottom: none; }
-        .settings-section h2 { margin-bottom: 15px; }
-        .log-table { width: 100%; border-collapse: collapse; }
-        .log-table th, .log-table td { padding: 10px; border: 1px solid #ddd; text-align: left; }
-        .log-table th { background-color: #f2f2f2; }
-        .pagination { margin-top: 20px; text-align: center; }
-        .pagination a, .pagination span { padding: 8px 16px; text-decoration: none; color: #007bff; border: 1px solid #ddd; margin: 0 4px; }
-        .pagination a:hover { background-color: #ddd; }
-        .pagination .active { background-color: #007bff; color: white; border-color: #007bff; }
-    </style>
-</head>
-<body>
-    <div class="settings-container">
-        <h1>Security Settings</h1>
-        <div class="nav-links">
-            <a href="dashboard.php">Home</a>
-            <a href="profile.php">My Profile</a>
-            <a href="security_settings.php">Security Settings</a>
-            <a href="logout.php">Logout</a>
-        </div>
+<style>
+    .settings-container { max-width: 1000px; }
+    .settings-section { margin-bottom: 40px; border-bottom: 1px solid var(--border-color); padding-bottom: 20px; }
+    .settings-section:last-child { border-bottom: none; }
+    .settings-section h2 { color: var(--primary-color); margin-bottom: 15px; }
+    .log-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    .log-table th, .log-table td { padding: 10px; border: 1px solid var(--border-color); text-align: left; }
+    .log-table th { background-color: var(--light-accent-color); }
+    .pagination { margin-top: 20px; text-align: center; }
+    .pagination a, .pagination span { padding: 8px 16px; text-decoration: none; color: var(--primary-color); border: 1px solid var(--border-color); margin: 0 4px; }
+    .pagination a:hover { background-color: var(--primary-color); color: #ffffff; }
+    .pagination .active { background-color: var(--primary-color); color: white; border-color: var(--primary-color); }
+</style>
+
+<div class="settings-container">
+    <h2><i class="fas fa-shield-alt"></i> Security Settings</h2>
+    <p style="color: var(--muted-text-color);">Manage your account security below.</p>
 
         <!-- Password Change Section -->
         <div class="settings-section">
-            <h2>Change Password</h2>
+            <h2><i class="fas fa-key"></i> Change Password</h2>
             <?php if(!empty($password_err)) { echo '<div class="alert-error">' . $password_err . '</div>'; } ?>
             <?php if(!empty($password_success)) { echo '<div class="alert-success">' . $password_success . '</div>'; } ?>
             <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
@@ -193,7 +184,7 @@ if ($stmt = $conn->prepare($count_sql)) {
 
         <!-- 2FA Section -->
         <div class="settings-section">
-            <h2>Two-Factor Authentication (2FA)</h2>
+            <h2><i class="fas fa-mobile-alt"></i> Two-Factor Authentication (2FA)</h2>
             <p><em>Note: This is a simulated 2FA toggle for demonstration purposes. In a real application, this would integrate with an authenticator app.</em></p>
             <?php if(!empty($two_fa_success)) { echo '<div class="alert-success">' . $two_fa_success . '</div>'; } ?>
             <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
@@ -207,7 +198,7 @@ if ($stmt = $conn->prepare($count_sql)) {
 
         <!-- Full Security Log -->
         <div class="settings-section">
-            <h2>Full Security Log</h2>
+            <h2><i class="fas fa-list-alt"></i> Full Security Log</h2>
             <?php if (!empty($logs)): ?>
                 <table class="log-table">
                     <thead>
