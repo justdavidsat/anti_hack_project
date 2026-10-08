@@ -23,7 +23,10 @@ if (session_status() === PHP_SESSION_NONE) {
                 <a href="dashboard.php"><i class="fas fa-home"></i> Home</a>
                 <a href="profile.php"><i class="fas fa-user"></i> My Profile</a>
                 <a href="security_settings.php"><i class="fas fa-cog"></i> Security Settings</a>
-                <a href="audit.php"><i class="fas fa-clipboard-check"></i> Security Audit</a> <!-- NEW LINK -->
+                <a href="audit.php"><i class="fas fa-clipboard-check"></i> Security Audit</a>
+                <?php if (isset($_SESSION["role"]) && $_SESSION["role"] === "admin"): ?>
+                <a href="admin.php"><i class="fas fa-user-shield"></i> Admin Audit</a>
+                <?php endif; ?>
                 <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
             </nav>
             <?php endif; ?>

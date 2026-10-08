@@ -28,8 +28,15 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
     // Validate credentials
     if(empty($username_err) && empty($password_err)){
+
+        // Rate limit repeated unknown-username attempts from this IP
+        if(is_ip_rate_limited($_SERVER['REMOTE_ADDR'])){
+            $login_err = "Too many failed attempts. Please try again in " . ACCOUNT_LOCKOUT_WINDOW_MINUTES . " minutes.";
+            log_security_event(0, 'login_attempt', 'throttled', 'Login blocked by IP rate limit.');
+        } else {
+
         // Prepare a select statement
-        $sql = "SELECT id, username, password, account_status FROM users WHERE username = ? OR email = ?";
+        $sql = "SELECT id, username, password, account_status, role, two_factor_enabled, two_factor_secret FROM users WHERE username = ? OR email = ?";
 
         if($stmt = $conn->prepare($sql)){
             $stmt->bind_param("ss", $param_username, $param_username);
@@ -41,19 +48,39 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                 // Check if username exists, if yes then verify password
                 if($stmt->num_rows == 1){
                     // Bind result variables
-                    $stmt->bind_result($id, $username, $hashed_password, $account_status);
+                    $stmt->bind_result($id, $username, $hashed_password, $account_status, $role, $two_factor_enabled, $two_factor_secret);
                     if($stmt->fetch()){
                         if($account_status !== 'active'){
                             $login_err = "Your account is locked or suspended. Please contact support.";
                             log_security_event($id, 'login_attempt', 'failed_account_status', 'Account is not active.');
+                        } elseif(is_account_locked($id)){
+                            // Account is inside the lockout window - reject before password check
+                            register_failed_attempt($conn, $id);
+                            log_security_event($id, 'login_attempt', 'blocked_lockout', 'Login rejected while the account is locked.');
+                            $login_err = "Too many failed login attempts. Please try again in " . ACCOUNT_LOCKOUT_WINDOW_MINUTES . " minutes.";
                         } elseif(password_verify($password, $hashed_password)){
-                            // Password is correct, so start a new session
-                            session_start();
+                            // Password is correct
+                            if($two_factor_enabled && !empty($two_factor_secret)){
+                                // Second factor required: hold a pending session and challenge the user
+                                session_regenerate_id(true);
+                                $_SESSION["pending_2fa"] = true;
+                                $_SESSION["pending_user_id"] = $id;
+                                $_SESSION["pending_username"] = $username;
+                                $_SESSION["pending_role"] = $role;
+                                $_SESSION["pending_password_ok"] = true;
+                                header("location: verify_2fa.php");
+                                exit;
+                            }
+
+                            // Start a hardened session
+                            session_regenerate_id(true);
 
                             // Store data in session variables
                             $_SESSION["loggedin"] = true;
                             $_SESSION["id"] = $id;
                             $_SESSION["username"] = $username;
+                            $_SESSION["role"] = $role;
+                            adopt_session_guard($id);
 
                             // Update last login timestamp
                             $update_sql = "UPDATE users SET last_login = NOW() WHERE id = ?";
@@ -68,11 +95,13 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
                             // Redirect user to dashboard page
                             header("location: dashboard.php");
+                            exit;
                         } else{
                             // Password is not valid, display a generic error message
                             $login_err = "Invalid username or password.";
                             // Log failed login attempt
                             log_security_event($id, 'login_attempt', 'failed_password', 'Invalid password entered.');
+                            register_failed_attempt($conn, $id);
                         }
                     }
                 } else{
@@ -88,6 +117,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             // Close statement
             $stmt->close();
         }
+
+        } // end IP rate limit guard
     }
 
     // Close connection

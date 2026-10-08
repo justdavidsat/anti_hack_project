@@ -1,17 +1,17 @@
 <?php
 // dashboard.php
 
-// Define page title for the header
- $page_title = "Dashboard";
-
-// Include the header
-require_once "includes/header.php";
-
 // Include the functions file to check login status
 require_once "includes/functions.php";
 
 // If the user is not logged in, redirect them to the login page
 require_login();
+
+// Define page title for the header (after auth so redirects can still send headers)
+ $page_title = "Dashboard";
+
+// Include the header
+require_once "includes/header.php";
 
 // Get the username from the session
  $username = $_SESSION['username'];

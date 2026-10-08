@@ -1,18 +1,18 @@
 <?php
 // audit.php
 
-// Define page title for the header
- $page_title = "Security Audit";
-
-// Include the header
-require_once "includes/header.php";
-
 // Include the functions file
 require_once "includes/functions.php";
 require_once "includes/db.php";
 
 // If the user is not logged in, redirect to login page
 require_login();
+
+// Define page title for the header (after auth so redirects can still send headers)
+ $page_title = "Security Audit";
+
+// Include the header
+require_once "includes/header.php";
 
  $user_id = $_SESSION["id"];
  $username = $_SESSION["username"];
@@ -57,7 +57,9 @@ if (!$user_data['two_factor_enabled']) {
 // Check 2: Recent Failed Login Attempts
  $failed_attempts = 0;
 foreach ($logs as $log) {
-    if ($log['action'] == 'login' && $log['status'] == 'failed') {
+    if ($log['action'] == 'login_attempt' && strpos($log['status'], 'failed') === 0) {
+        $failed_attempts++;
+    } elseif ($log['action'] == 'login' && $log['status'] == 'failed') {
         $failed_attempts++;
     }
 }

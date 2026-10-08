@@ -55,13 +55,18 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         }
     }
 
-    // Validate password
+    // Validate password (length + strength policy)
     if(empty(trim($_POST["password"]))){
         $password_err = "Please enter a password.";
-    } elseif(strlen(trim($_POST["password"])) < 6){
-        $password_err = "Password must have at least 6 characters.";
+    } elseif(strlen(trim($_POST["password"])) < PASSWORD_MIN_LENGTH){
+        $password_err = "Password must have at least " . PASSWORD_MIN_LENGTH . " characters.";
     } else{
         $password = trim($_POST["password"]);
+        $strength = assess_password($password);
+        if($strength['score'] < PASSWORD_MIN_SCORE){
+            $password_err = "Password is too weak: " . (empty($strength['suggestions']) ? "add length, letters, numbers and symbols." : implode(" ", $strength['suggestions']));
+            $password = "";
+        }
     }
 
     // Validate confirm password
@@ -88,6 +93,11 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             $param_password = password_hash($password, PASSWORD_DEFAULT);
 
             if($stmt->execute()){
+                $new_user_id = $conn->insert_id;
+
+                // Record the account creation as a security event
+                log_security_event($new_user_id, 'account_created', 'success', 'New account created: ' . $username);
+
                 // Redirect to login page
                 header("location: login.php");
             } else{
@@ -120,7 +130,9 @@ require_once "includes/header.php";
             </div>
             <div class="form-group">
                 <label><i class="fas fa-lock"></i> Password</label>
-                <input type="password" name="password">
+                <input type="password" name="password" id="reg_password" oninput="updateStrengthMeter('reg_password','reg_strength','reg_strength_text')">
+                <div class="strength-meter"><div class="strength-bar" id="reg_strength"></div></div>
+                <span class="strength-text" id="reg_strength_text">&nbsp;</span>
                 <span class="error"><?php echo $password_err; ?></span>
             </div>
             <div class="form-group">
@@ -144,6 +156,36 @@ require_once "includes/header.php";
 .auth-switch a { color: var(--primary-color); font-weight: 600; text-decoration: none; }
 .auth-switch a:hover { text-decoration: underline; }
 .error { color: var(--error-color); font-size: 0.9em; display: block; margin-top: 5px; }
+.strength-meter { background: #eee; border-radius: 4px; height: 8px; margin-top: 8px; overflow: hidden; }
+.strength-bar { height: 100%; width: 0; transition: width 0.2s, background 0.2s; }
+.strength-text { font-size: 0.85em; color: var(--muted-text-color); display: block; margin-top: 4px; }
 </style>
+
+<script>
+// Advisory meter; the server enforces the real score (min 40/100, min 8 characters)
+function updateStrengthMeter(inputId, barId, textId) {
+    var pw = document.getElementById(inputId).value;
+    var score = 0;
+    if (pw.length >= 8) score += 30;
+    if (pw.length >= 12) score += 10;
+    if (pw.length >= 16) score += 10;
+    if (/[a-z]/.test(pw)) score += 10;
+    if (/[A-Z]/.test(pw)) score += 10;
+    if (/[0-9]/.test(pw)) score += 10;
+    if (/[^A-Za-z0-9]/.test(pw)) score += 15;
+    if (/(0123|1234|2345|3456|4567|5678|6789|abcd|bcde|cdef)/i.test(pw)) score -= 15;
+    score = Math.max(0, Math.min(100, score));
+    var color = '#d9534f';
+    var label = 'Weak';
+    if (score >= 80) { color = '#2e7d32'; label = 'Very Strong'; }
+    else if (score >= 60) { color = '#5cb85c'; label = 'Strong'; }
+    else if (score >= 40) { color = '#f0ad4e'; label = 'Moderate'; }
+    var bar = document.getElementById(barId);
+    bar.style.width = score + '%';
+    bar.style.background = color;
+    document.getElementById(textId).textContent = pw.length ? (label + ' (' + score + '/100)') : ' ';
+    document.getElementById(textId).style.color = color;
+}
+</script>
 
 <?php require_once "includes/footer.php"; ?>
